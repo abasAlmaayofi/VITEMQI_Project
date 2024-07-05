@@ -29,6 +29,7 @@ function Quiz({ closeTest, setCloseTest }) {
     null,
     null,
   ]);
+  const [points, setPoints] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const name = secureLocalStorage.getItem("name");
   const email = secureLocalStorage.getItem("email");
@@ -44,6 +45,12 @@ function Quiz({ closeTest, setCloseTest }) {
     } else {
       console.log(error);
     }
+    let bufferPoints = [];
+    for (const question of data) {
+      bufferPoints.push(question.points);
+    }
+    setPoints(bufferPoints);
+    console.log(bufferPoints);
   };
 
   const handleNextQuestions = () => {
@@ -81,6 +88,7 @@ function Quiz({ closeTest, setCloseTest }) {
       phone,
       answers: results,
       marked: false,
+      points: points,
     });
     if (error) {
       console.log(error);

@@ -1,4 +1,4 @@
-import { Button, Radio, RadioGroup, Textarea } from "@nextui-org/react";
+import { Button, Input, Radio, RadioGroup, Textarea } from "@nextui-org/react";
 import React from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { supabase } from "../lib/supabase";
@@ -6,23 +6,31 @@ import { supabase } from "../lib/supabase";
 function CreateSurvey({ questions, setQuestions, notify }) {
   async function insertQuestions() {
     try {
-      for (const question of questions) {
-        const { data, error } = await supabase
-          .from("questions")
-          .insert({
-            question: question.question,
-            version: 1,
-            type: question.type,
-            answers: question?.answers,
-          })
-          .select();
+      const { error } = await supabase
+        .from("questions")
+        .delete()
+        .eq("version", 1);
+      if (!error) {
+        for (const question of questions) {
+          const { data, error } = await supabase
+            .from("questions")
+            .insert({
+              question: question.question,
+              version: 1,
+              type: question.type,
+              answers: question?.answers,
+              correctAnswer: question?.correctAnswer,
+              points: question?.points,
+            })
+            .select();
 
-        if (error) {
-          console.error("Error inserting question:", error);
-          continue;
+          if (error) {
+            console.error("Error inserting question:", error);
+            continue;
+          }
         }
+        notify();
       }
-      notify();
     } catch (err) {
       console.error(err.message);
     }
@@ -44,6 +52,20 @@ function CreateSurvey({ questions, setQuestions, notify }) {
     let bufferForQuestions = questions;
     bufferForQuestions[index].answers[answerIndex] = e.target.value;
     setQuestions([...bufferForQuestions]);
+  };
+
+  const handleOnValuePoints = (e, index) => {
+    let bufferForQuestions = questions;
+    bufferForQuestions[index].points = e.target.value;
+    setQuestions([...bufferForQuestions]);
+    console.log(questions);
+  };
+
+  const handleOnValueCorrectAnswer = (e, index) => {
+    let bufferForQuestions = questions;
+    bufferForQuestions[index].correctAnswer = e;
+    setQuestions([...bufferForQuestions]);
+    console.log(questions);
   };
 
   const incrementQuestions = () => {
@@ -99,6 +121,13 @@ function CreateSurvey({ questions, setQuestions, notify }) {
               </Radio>
             </RadioGroup>
           </div>
+          <Input
+            label="Points"
+            className="w-16"
+            type="number"
+            value={question?.points}
+            onChange={(e) => handleOnValuePoints(e, index)}
+          />
           {question?.type !== "essay" && (
             <div>
               <label className="poppins-regular text-sm">Choices</label>
@@ -107,16 +136,27 @@ function CreateSurvey({ questions, setQuestions, notify }) {
                   key={answerIndex}
                   className="flex justify-center items-center gap-2 mt-2"
                 >
-                  <label className="poppins-regular text-sm">
-                    {answerIndex + 1}
-                  </label>
-                  <Textarea
-                    type="text"
-                    value={answer === null ? "" : answer}
-                    onChange={(e) =>
-                      handleOnChangeAnswer(e, index, answerIndex)
+                  <RadioGroup
+                    value={
+                      question?.correctAnswer === null
+                        ? ""
+                        : question?.correctAnswer
                     }
-                  />
+                    onValueChange={(e) => handleOnValueCorrectAnswer(e, index)}
+                    className="w-full"
+                  >
+                    <Radio
+                      value={answer === null ? "" : answer}
+                      className="w-fit"
+                    />
+                    <Textarea
+                      type="text"
+                      value={answer === null ? "" : answer}
+                      onChange={(e) =>
+                        handleOnChangeAnswer(e, index, answerIndex)
+                      }
+                    />
+                  </RadioGroup>
                 </div>
               ))}
             </div>

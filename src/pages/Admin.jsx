@@ -19,6 +19,8 @@ import { supabase } from "../lib/supabase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CreateSurvey from "../components/CreateSurvey";
+import NewTests from "../components/NewTests";
+import PastTests from "../components/PastTests";
 
 function Admin() {
   const notify = () =>
@@ -147,8 +149,10 @@ function Admin() {
                   setQuestions={setQuestions}
                   notify={notify}
                 />
+              ) : selectedSidebarButton === "newTests" ? (
+                <NewTests />
               ) : (
-                ""
+                <PastTests />
               )}
             </div>
           </div>
