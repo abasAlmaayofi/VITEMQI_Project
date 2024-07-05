@@ -33,14 +33,14 @@ function Main() {
               <span className="rounded-full px-[10px] py-[0.5px] bg-[#458FF6] text-slate-50 ">
                 A
               </span>{" "}
-              Survey for Professionals in the Kuwait Internal Board of Medicine
+              Survey for Professionals in the Kuwait Board of Internal Medicine
             </h2>
           </div>
           <div className="absolute right-0">
             <Image src={squareDots} alt="squaredots" />
           </div>
           <div className="w-screen md:w-1/2 p-4">
-            <img
+            <Image
               src={healthCare}
               className="md:w-[600px] w-[300px] h-auto"
               alt="healthcare_image"
