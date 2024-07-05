@@ -10,13 +10,25 @@ import Squaredots from "../components/shared/Squaredots";
 import Timer from "../components/Timer";
 import StartingSurveyModal from "../components/StartingSurveyModal";
 import { useDisclosure } from "@nextui-org/react";
+import { supabase } from "../lib/supabase";
 
 const Survey = () => {
-  const initialTime = 350;
-  const [time, setTime] = useState(initialTime);
+  const [time, setTime] = useState(2100);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [startTest, setStartTest] = useState(false);
   const [closeTest, setCloseTest] = useState(false);
+
+  const fetchTime = async () => {
+    const { data, error } = await supabase.from("timers").select();
+    if (error) {
+      console.log(error);
+    }
+    setTime(data?.[0]?.time);
+  };
+
+  useEffect(() => {
+    fetchTime();
+  }, []);
 
   useEffect(() => {
     onOpen();
@@ -39,7 +51,7 @@ const Survey = () => {
         <div className="w-screen relative z-0">
           <Timer
             startTest={startTest}
-            initialTime={initialTime}
+            initialTime={time}
             time={time}
             setTime={setTime}
           />

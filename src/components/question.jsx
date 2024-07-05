@@ -26,20 +26,23 @@ function question({
       </h1>
       {answerType == "essay" ? (
         <Textarea
-          minRows={7}
+          minRows={10}
           variant="bordered"
           placeholder="Enter your answer.."
-          className="md:w-[700px] w-[200px] mt-6"
-          value={results[questionNo]}
+          className="md:w-[700px] w-[300px] mt-6"
+          value={results[questionNo] ?? ""}
           onChange={(e) => handleChangingValue(questionNo, e.target.value)}
         />
       ) : (
         <RadioGroup onValueChange={(e) => handleChangingValue(questionNo, e)}>
-          {answers?.map((answer, index) => (
-            <Radio key={index} value={answer}>
-              {answer}
-            </Radio>
-          ))}
+          {answers?.map(
+            (answer, index) =>
+              answer && (
+                <Radio key={index} value={answer}>
+                  {answer}
+                </Radio>
+              )
+          )}
         </RadioGroup>
       )}
     </div>

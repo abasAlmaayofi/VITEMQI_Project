@@ -10,10 +10,29 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { sendEmail } from "./emails/SendEmail";
+import axios from "axios";
 
 function NewTests() {
   const [tests, setTests] = useState([{}]);
   const [questions, setQuestions] = useState([{}]);
+
+  const postResults = async (test, questions) => {
+    axios
+      .post(`${import.meta.env.VITE_APP_BACKEND_URL}/sendEmail`, {
+        name: test?.name,
+        email: test?.email,
+        phone: test?.phone,
+        questions: questions,
+        answers: test?.answers,
+        correctAnswers: test?.feedback,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   const fetchAllNewTests = async () => {
     const { data, error } = await supabase
@@ -40,10 +59,12 @@ function NewTests() {
         null,
         null,
         null,
+        null,
       ];
       modifiedData.push(singletest);
     }
     setTests(modifiedData);
+    console.log(modifiedData);
   };
 
   const fetchAllQuestions = async () => {
@@ -52,6 +73,7 @@ function NewTests() {
       console.log(error);
     }
     setQuestions(data);
+    console.log(data);
   };
 
   const handleFeedbackValueChange = (e, testIndex, questionIndex) => {
@@ -62,20 +84,26 @@ function NewTests() {
 
   const handlePointsValueChange = (e, testIndex, questionIndex) => {
     let bufferTests = tests;
+    console.log(typeof e.target.value);
     bufferTests[testIndex].points[questionIndex] = e.target.value;
     setTests([...bufferTests]);
-    console.log(tests);
   };
 
   const sendFeedback = async (testIndex) => {
-    // let insertedTest = tests[testIndex];
-    // insertedTest.marked = true;
-    // const { data, error } = await supabase.from("results").upsert(insertedTest);
-    sendEmail();
+    let insertedTest = tests[testIndex];
+    let insertedQuestions = questions.map((question) => question?.question);
+    insertedTest.marked = true;
+    insertedTest.totalPoints = insertedTest.points.reduce(
+      (a, b) => Number(a) + Number(b),
+      0
+    );
+    console.log(insertedTest?.feedback);
 
-    // if (error) {
-    //   console.log(error);
-    // }
+    const { data, error } = await supabase.from("results").upsert(insertedTest);
+    if (error) {
+      console.log(error);
+    }
+    postResults(insertedTest, insertedQuestions);
   };
 
   useEffect(() => {
@@ -138,6 +166,7 @@ function NewTests() {
                   <Input
                     isDisabled={question.type !== "essay"}
                     label="Points"
+                    type="number"
                     value={test?.points?.[questionIndex]}
                     onChange={(e) =>
                       handlePointsValueChange(e, testIndex, questionIndex)
@@ -149,11 +178,7 @@ function NewTests() {
                     minRows={7}
                     variant="bordered"
                     placeholder="Enter your feedback.."
-                    value={
-                      test?.feedback?.[questionIndex] === null
-                        ? ""
-                        : test?.feedback?.[questionIndex]
-                    }
+                    value={test?.feedback?.[questionIndex] ?? ""}
                     onValueChange={(e) =>
                       handleFeedbackValueChange(e, testIndex, questionIndex)
                     }

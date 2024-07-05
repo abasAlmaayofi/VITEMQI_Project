@@ -50,7 +50,6 @@ function Quiz({ closeTest, setCloseTest }) {
       bufferPoints.push(question.points);
     }
     setPoints(bufferPoints);
-    console.log(bufferPoints);
   };
 
   const handleNextQuestions = () => {

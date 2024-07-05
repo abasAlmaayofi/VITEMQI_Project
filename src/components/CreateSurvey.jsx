@@ -1,9 +1,22 @@
 import { Button, Input, Radio, RadioGroup, Textarea } from "@nextui-org/react";
-import React from "react";
+import React, { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { supabase } from "../lib/supabase";
 
 function CreateSurvey({ questions, setQuestions, notify }) {
+  const [quizTimer, setQuizTimer] = useState(35);
+
+  const changeQuizTimer = async () => {
+    const response = await supabase.from("timers").delete().neq("id", 0);
+    const { error } = await supabase
+      .from("timers")
+      .upsert({ time: Number(quizTimer) * 60 });
+
+    if (error) {
+      console.log(error);
+    }
+  };
+
   async function insertQuestions() {
     try {
       const { error } = await supabase
@@ -90,6 +103,18 @@ function CreateSurvey({ questions, setQuestions, notify }) {
   };
   return (
     <form className="bg-white rounded-xl p-4 max-h-screen overflow-y-scroll">
+      <div className="flex gap-6 items-center justify-start mb-6">
+        <label className="poppins-medium text-xl">Timer</label>
+        <Input
+          type="number"
+          value={quizTimer}
+          onChange={(e) => setQuizTimer(e.target.value)}
+          className="w-20"
+        />
+        <Button color="primary" onPress={changeQuizTimer}>
+          Set
+        </Button>
+      </div>
       {questions?.map((question, index) => (
         <div key={index} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
