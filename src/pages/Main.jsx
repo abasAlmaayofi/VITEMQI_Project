@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Header from "../components/Header";
-import healthCare from "../assets/svgs/healthcare.svg";
+import healthCare from "../assets/svgs/healthcare.png";
 import {
   Card,
   CardHeader,
