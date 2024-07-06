@@ -25,6 +25,7 @@ function NewTests() {
         questions: questions,
         answers: test?.answers,
         correctAnswers: test?.feedback,
+        totalPoints: test?.totalPoints,
       })
       .then(function (response) {
         console.log(response);
@@ -97,7 +98,6 @@ function NewTests() {
       (a, b) => Number(a) + Number(b),
       0
     );
-    console.log(insertedTest?.feedback);
 
     const { data, error } = await supabase.from("results").upsert(insertedTest);
     if (error) {
