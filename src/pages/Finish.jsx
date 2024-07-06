@@ -12,8 +12,7 @@ function Finish() {
           Thank You for Taking the Test
         </h1>
         <p className="poppins-medium tracking-wide">
-          Your test results will be sent to you by email within the next 24
-          hours.
+          Your results will be sent to you by email later
         </p>
       </div>
       <div className="absolute -right-8 bottom-44 z-20">

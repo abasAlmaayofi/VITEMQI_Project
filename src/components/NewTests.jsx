@@ -11,14 +11,14 @@ import {
 } from "@nextui-org/react";
 import { sendEmail } from "./emails/SendEmail";
 import axios from "axios";
-
+axios.defaults.baseURL = import.meta.env.VITE_APP_BACKEND_URL;
 function NewTests() {
   const [tests, setTests] = useState([{}]);
   const [questions, setQuestions] = useState([{}]);
 
   const postResults = async (test, questions) => {
     axios
-      .post(`${import.meta.env.VITE_APP_BACKEND_URL}/sendEmail`, {
+      .post(`/sendEmail`, {
         name: test?.name,
         email: test?.email,
         phone: test?.phone,
