@@ -109,8 +109,8 @@ function Quiz({ closeTest, setCloseTest }) {
           className="md:max-w-4xl max-w-sm md:mx-auto"
         />
       </div>
-      <div className="overflow-y-scroll border-l-4 md:mx-auto border-[#458FF6] md:w-[900px] w-[400px] md:h-[450px] h-[500px] p-4 flex flex-col bg-slate-100">
-        <div className="relative w-full h-full overflow-y-scroll">
+      <div className="overflow-y-scroll overflow-x-hidden border-l-4 md:mx-auto border-[#458FF6] md:w-[900px] w-[450px] md:h-[450px] h-[600px] p-4 flex flex-col bg-slate-100">
+        <div className="relative w-full h-full overflow-y-scroll overflow-x-hidden">
           <AnimatePresence initial={false}>
             {quiz?.questions?.map(
               (question, index) =>

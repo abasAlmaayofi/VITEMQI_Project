@@ -15,6 +15,7 @@ axios.defaults.baseURL = import.meta.env.VITE_APP_BACKEND_URL;
 function NewTests() {
   const [tests, setTests] = useState([{}]);
   const [questions, setQuestions] = useState([{}]);
+  const [refresh, setRefresh] = useState(false);
 
   const postResults = async (test, questions) => {
     axios
@@ -62,6 +63,7 @@ function NewTests() {
         null,
         null,
       ];
+      singletest.totalPoints = 0;
       modifiedData.push(singletest);
     }
     setTests(modifiedData);
@@ -85,8 +87,13 @@ function NewTests() {
 
   const handlePointsValueChange = (e, testIndex, questionIndex) => {
     let bufferTests = tests;
-    console.log(typeof e.target.value);
     bufferTests[testIndex].points[questionIndex] = e.target.value;
+    setTests([...bufferTests]);
+  };
+
+  const handleTotalPoints = (e, testIndex) => {
+    let bufferTests = tests;
+    bufferTests[testIndex].totalPoints = e.target.value;
     setTests([...bufferTests]);
   };
 
@@ -94,25 +101,26 @@ function NewTests() {
     let insertedTest = tests[testIndex];
     let insertedQuestions = questions.map((question) => question?.question);
     insertedTest.marked = true;
-    insertedTest.totalPoints = insertedTest.points.reduce(
-      (a, b) => Number(a) + Number(b),
-      0
-    );
-
+    // insertedTest.totalPoints = insertedTest.points.reduce(
+    //   (a, b) => Number(a) + Number(b),
+    //   0
+    // );
     const { data, error } = await supabase.from("results").upsert(insertedTest);
     if (error) {
       console.log(error);
     }
     postResults(insertedTest, insertedQuestions);
+    setRefresh((preVal) => !preVal);
+    window.alert("Feedback was sent successfuly");
   };
 
   useEffect(() => {
     fetchAllNewTests();
     fetchAllQuestions();
-  }, []);
+  }, [refresh]);
 
   return (
-    <div className="bg-white rounded-xl p-4 max-h-screen overflow-y-scroll">
+    <div className="bg-white rounded-xl px-4 pb-20 max-h-screen overflow-y-scroll ">
       <Accordion>
         {tests.map((test, testIndex) => (
           <AccordionItem
@@ -187,6 +195,15 @@ function NewTests() {
                 </div>
               </div>
             ))}
+            <Input
+              className="my-8"
+              type="number"
+              color="warning"
+              label="Total Points"
+              max={15}
+              value={test?.totalPoints}
+              onChange={(e) => handleTotalPoints(e, testIndex)}
+            />
             <div className="flex justify-end">
               <Button
                 onPress={() => sendFeedback(testIndex)}

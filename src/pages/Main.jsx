@@ -33,7 +33,7 @@ function Main() {
               <span className="rounded-full px-[10px] py-[0.5px] bg-[#458FF6] text-slate-50 ">
                 A
               </span>{" "}
-              Survey for Professionals in the Kuwait Board of Internal Medicine
+              Survey for Professionals in the Kuwaiti Board of Internal Medicine
             </h2>
           </div>
           <div className="absolute right-0">
