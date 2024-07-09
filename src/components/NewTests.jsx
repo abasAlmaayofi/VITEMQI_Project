@@ -181,10 +181,10 @@ function NewTests() {
                     className="w-16"
                   />
                   <Textarea
-                    label="Feedback"
+                    label="Correct Answer"
                     minRows={7}
                     variant="bordered"
-                    placeholder="Enter your feedback.."
+                    placeholder="Enter the correct answer.."
                     value={test?.feedback?.[questionIndex] ?? ""}
                     onValueChange={(e) =>
                       handleFeedbackValueChange(e, testIndex, questionIndex)
