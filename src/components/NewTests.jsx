@@ -142,12 +142,11 @@ function NewTests() {
                 </h1>
                 {question.type == "essay" ? (
                   <Textarea
-                    isDisabled
-                    minRows={7}
+                    disabled
                     label="Answer"
                     variant="bordered"
                     placeholder="Enter your answer.."
-                    className="md:w-[500px] w-[200px] mt-6"
+                    className="md:w-[500px] w-[200px] mt-6 overflow-y-scroll"
                     value={
                       test?.answers?.[questionIndex] !== null
                         ? test?.answers?.[questionIndex]
@@ -172,7 +171,7 @@ function NewTests() {
                 )}
                 <div className="w-full mt-6">
                   <Input
-                    isDisabled={question.type !== "essay"}
+                    isDisabled
                     label="Points"
                     type="number"
                     value={test?.points?.[questionIndex]}
@@ -190,7 +189,7 @@ function NewTests() {
                     onValueChange={(e) =>
                       handleFeedbackValueChange(e, testIndex, questionIndex)
                     }
-                    className="md:w-[500px] w-[200px] mt-6 border-4 border-orange-600 rounded-2xl"
+                    className="md:w-[500px] w-[200px] mt-6 border-4 border-orange-600 rounded-2xl overflow-y-scroll"
                   />
                 </div>
               </div>
