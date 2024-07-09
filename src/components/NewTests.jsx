@@ -12,6 +12,9 @@ import {
 import { sendEmail } from "./emails/SendEmail";
 import axios from "axios";
 axios.defaults.baseURL = import.meta.env.VITE_APP_BACKEND_URL;
+
+function sumAllPoints(points) {}
+
 function NewTests() {
   const [tests, setTests] = useState([{}]);
   const [questions, setQuestions] = useState([{}]);
@@ -67,7 +70,6 @@ function NewTests() {
       modifiedData.push(singletest);
     }
     setTests(modifiedData);
-    console.log(modifiedData);
   };
 
   const fetchAllQuestions = async () => {
@@ -76,7 +78,6 @@ function NewTests() {
       console.log(error);
     }
     setQuestions(data);
-    console.log(data);
   };
 
   const handleFeedbackValueChange = (e, testIndex, questionIndex) => {
@@ -91,20 +92,23 @@ function NewTests() {
     setTests([...bufferTests]);
   };
 
-  const handleTotalPoints = (e, testIndex) => {
+  const handleTotalPoints = (e, insertedTest, testIndex) => {
     let bufferTests = tests;
-    bufferTests[testIndex].totalPoints = e.target.value;
-    setTests([...bufferTests]);
+    let totalPoints = insertedTest.points.reduce(
+      (a, b) => Number(a) + Number(b),
+      0
+    );
+    if (totalPoints >= e.target.value) {
+      bufferTests[testIndex].totalPoints = e.target.value;
+      setTests([...bufferTests]);
+    }
   };
 
   const sendFeedback = async (testIndex) => {
     let insertedTest = tests[testIndex];
     let insertedQuestions = questions.map((question) => question?.question);
     insertedTest.marked = true;
-    // insertedTest.totalPoints = insertedTest.points.reduce(
-    //   (a, b) => Number(a) + Number(b),
-    //   0
-    // );
+
     const { data, error } = await supabase.from("results").upsert(insertedTest);
     if (error) {
       console.log(error);
@@ -201,7 +205,7 @@ function NewTests() {
               label="Total Points"
               max={15}
               value={test?.totalPoints}
-              onChange={(e) => handleTotalPoints(e, testIndex)}
+              onChange={(e) => handleTotalPoints(e, test, testIndex)}
             />
             <div className="flex justify-end">
               <Button
