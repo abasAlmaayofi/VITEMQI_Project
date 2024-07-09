@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import { sendEmail } from "./emails/SendEmail";
 import axios from "axios";
+import LoadingModal from "./LoadingModal";
 axios.defaults.baseURL = import.meta.env.VITE_APP_BACKEND_URL;
 
 function sumAllPoints(points) {}
@@ -19,9 +20,10 @@ function NewTests() {
   const [tests, setTests] = useState([{}]);
   const [questions, setQuestions] = useState([{}]);
   const [refresh, setRefresh] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const postResults = async (test, questions) => {
-    axios
+    return axios
       .post(`/sendEmail`, {
         name: test?.name,
         email: test?.email,
@@ -108,14 +110,14 @@ function NewTests() {
     let insertedTest = tests[testIndex];
     let insertedQuestions = questions.map((question) => question?.question);
     insertedTest.marked = true;
-
     const { data, error } = await supabase.from("results").upsert(insertedTest);
     if (error) {
       console.log(error);
     }
-    postResults(insertedTest, insertedQuestions);
+    setLoading(true);
+    await postResults(insertedTest, insertedQuestions);
+    setLoading(false);
     setRefresh((preVal) => !preVal);
-    window.alert("Feedback was sent successfuly");
   };
 
   useEffect(() => {
@@ -219,6 +221,7 @@ function NewTests() {
           </AccordionItem>
         ))}
       </Accordion>
+      <LoadingModal isOpen={loading} />
     </div>
   );
 }
